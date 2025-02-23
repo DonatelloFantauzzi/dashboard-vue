@@ -31,10 +31,25 @@ export const useDashboardStore = defineStore('dashboard', () => {
     }
   }
 
+  const addUser = (user: User) => {
+    users.value.push(user)
+  }
+
+  function updateUser(updatedUser: User) {
+    const index = users.value.findIndex((user) => user.id === updatedUser.id)
+    if (index !== -1) {
+      users.value[index] = updatedUser
+    }
+  }
+
   function toggleTheme() {
     theme.value = theme.value === 'light' ? 'dark' : 'light'
     localStorage.setItem('theme', theme.value)
     document.documentElement.classList.toggle('dark', theme.value === 'dark')
+  }
+
+  const deleteUser = (id: number) => {
+    users.value = users.value.filter((user) => user.id !== id)
   }
 
   onMounted(() => {
@@ -60,5 +75,8 @@ export const useDashboardStore = defineStore('dashboard', () => {
     userCount,
     fetchUser,
     toggleTheme,
+    deleteUser,
+    addUser,
+    updateUser,
   }
 })

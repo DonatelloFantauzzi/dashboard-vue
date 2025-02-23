@@ -11,6 +11,10 @@
       <StatsCard title="Ordini Completati" icon="✅" :value="store.orders" />
       <StatsCard title="Guadagni Mensili" icon="💰" :value="'€ ' + store.revenue" />
     </div>
+    <!-- Tabella utenti -->
+    <div class="mt-6">
+      <UserTable />
+    </div>
     <div class="mt-6">
       <ChartWidget />
     </div>
@@ -20,6 +24,7 @@
 <script setup lang="ts">
 import ChartWidget from '@/components/ChartWidget.vue'
 import StatsCard from '@/components/StatsCard.vue'
+import UserTable from '@/components/UserTable.vue'
 import { useDashboardStore } from '@/store/dashboardStore'
 
 const store = useDashboardStore()
