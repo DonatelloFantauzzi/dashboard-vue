@@ -18,12 +18,18 @@
     <div class="mt-6">
       <ChartWidget />
     </div>
+    <UserNotification
+      v-if="store.notification"
+      :message="store.notification.message"
+      :type="store.notification.type"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
 import ChartWidget from '@/components/ChartWidget.vue'
 import StatsCard from '@/components/StatsCard.vue'
+import UserNotification from '@/components/UserNotification.vue'
 import UserTable from '@/components/UserTable.vue'
 import { useDashboardStore } from '@/store/dashboardStore'
 

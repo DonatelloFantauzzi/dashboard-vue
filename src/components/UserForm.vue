@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref, watch, computed } from 'vue'
 import { useDashboardStore } from '@/store/dashboardStore'
 
 const store = useDashboardStore()
 const props = defineProps<{ selectedUser: User | null }>()
 const emit = defineEmits(['close'])
+const isSubmitting = ref<boolean>(false)
 
 const userForm = ref({
   id: null as number | null,
@@ -25,7 +26,19 @@ watch(
   { immediate: true },
 )
 
+const errors = computed(() => {
+  return {
+    name: isSubmitting.value && userForm.value.name.trim() === '' ? 'Il nome è obbligatorio' : '',
+    email:
+      isSubmitting.value && !userForm.value.email.match(/^[^@]+@[^@]+\.[a-zA-Z]{2,}$/)
+        ? 'Email non valida'
+        : '',
+  }
+})
+
 const saveUser = () => {
+  isSubmitting.value = true
+  if (errors.value.name || errors.value.email) return // Se ci sono errori, blocchiamo il salvataggio
   if (userForm.value.id) {
     store.updateUser(userForm.value)
   } else {
@@ -39,18 +52,18 @@ const saveUser = () => {
   <div class="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center">
     <div class="bg-white p-6 rounded-lg shadow-lg">
       <h2 class="text-xl font-bold mb-4">{{ userForm.id ? 'Modifica' : 'Aggiungi' }} Utente</h2>
-      <input
-        v-model="userForm.name"
-        type="text"
-        placeholder="Nome"
-        class="w-full p-2 mb-2 border rounded"
-      />
-      <input
-        v-model="userForm.email"
-        type="email"
-        placeholder="Email"
-        class="w-full p-2 mb-2 border rounded"
-      />
+
+      <div class="mb-3">
+        <label class="block text-sm font-medium text-gray-700">Nome</label>
+        <input v-model="userForm.name" class="w-full p-2 border rounded-lg" />
+        <p v-if="errors.name" class="text-red-500 text-sm">{{ errors.name }}</p>
+      </div>
+
+      <div class="mb-3">
+        <label class="block text-sm font-medium text-gray-700">Email</label>
+        <input v-model="userForm.email" class="w-full p-2 border rounded-lg" />
+        <p v-if="errors.email" class="text-red-500 text-sm">{{ errors.email }}</p>
+      </div>
 
       <div class="flex justify-between mt-4">
         <button @click="emit('close')" class="px-4 py-2 bg-gray-400 text-white rounded">
